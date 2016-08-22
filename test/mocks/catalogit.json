@@ -1,0 +1,5 @@
+{
+  "name": "my-container",
+  "image": "registry.example.com/my-container:0.1.0",
+  "version": "0.1.0"
+}
