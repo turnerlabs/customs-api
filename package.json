@@ -1,0 +1,45 @@
+{
+  "name": "customs-api",
+  "version": "0.1.0",
+  "description": "A service for moving information from external cloud services into private Harbor services.",
+  "main": "app.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/mocha",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turnerlabs/customs-api.git"
+  },
+  "keywords": [
+    "harbor",
+    "customs-api",
+    "argo",
+    "turnerlabs"
+  ],
+  "author": {
+    "name": "Wilson Wise",
+    "email": "wilson.wise@turner.com"
+  },
+  "engines": {
+    "node": "6.3.1"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/turnerlabs/customs-api/issues"
+  },
+  "homepage": "https://github.com/turnerlabs/customs-api#readme",
+  "dependencies": {
+    "cors": "2.7.1",
+    "debug": "2.2.0",
+    "express": "4.14.0",
+    "morgan": "1.7.0",
+    "request": "2.74.0"
+  },
+  "devDependencies": {
+    "chai": "3.5.0",
+    "mocha": "3.0.2",
+    "nock": "8.0.0",
+    "supertest": "2.0.0"
+  }
+}
