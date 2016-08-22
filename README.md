@@ -53,3 +53,10 @@ rollback
                to CatalogIt will be made
 - requirement: A boolean value
 ```
+
+
+## Contributions
+
+As with all projects in TurnerLab, contributions from Turner employees are welcome. This repo follows
+[Vincent Driessen's Git Flow](http://nvie.com/posts/a-successful-git-branching-model/). Also it uses
+[semver 2.0](http://semver.org/spec/v2.0.0.html). Make sure PRs are into `develop`, not `master`.
