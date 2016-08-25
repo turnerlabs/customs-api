@@ -1,5 +1,7 @@
 # Customs API
 
+[![CircleCI](https://circleci.com/gh/turnerlabs/customs-api/tree/master.svg?style=svg)](https://circleci.com/gh/turnerlabs/customs-api/tree/master)
+
 A service for moving information from external cloud services into private Harbor services.
 
 
@@ -56,6 +58,8 @@ rollback
 
 
 ## Contributions
+
+Develop [![CircleCI](https://circleci.com/gh/turnerlabs/customs-api/tree/develop.svg?style=svg)](https://circleci.com/gh/turnerlabs/customs-api/tree/develop)
 
 As with all projects in TurnerLab, contributions from Turner employees are welcome. This repo follows
 [Vincent Driessen's Git Flow](http://nvie.com/posts/a-successful-git-branching-model/). Also it uses
