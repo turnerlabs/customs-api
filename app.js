@@ -37,6 +37,13 @@ app.post('/deploy/:shipment/:environment/:provider',
     handlers.response
 );
 
+app.post('/catalog/:shipment/:environment/:provider',
+    handlers.checkParams,
+    auth.checkToken,
+    catalog.register,
+    handlers.response
+);
+
 let server = app.listen(port, _ => debug('listening on %s', port));
 
 module.exports = server;
