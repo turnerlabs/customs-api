@@ -28,6 +28,8 @@ In most cases, the `$PROVIDER` is `ec2`.
 
 * `409` - The container version already exists. Containers are immutable.
 
+* `422` - When bad data is supplied in the request, such as a nonexistent container name.
+
 
 ## Deploy Endpoint
 
