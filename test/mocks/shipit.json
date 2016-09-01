@@ -1,0 +1,12 @@
+{
+  "buildToken": "test-token",
+  "name": "test-env",
+  "parentShipment": {
+    "name": "mss-shipit-api",
+    "group": "test",
+    "envVars": []
+  },
+  "envVars": [],
+  "providers": [],
+  "containers": []
+}
