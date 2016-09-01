@@ -79,6 +79,51 @@ catalog
 ```
 
 
+## Catalog Endpoint
+
+Catalog a Docker image for use with a Shipment. This endpoint will not interact with a Shipment, but
+does use the Shipment's authorization mechanism.
+
+
+### POST `/catalog/:shipment/:environment/:provider`
+
+> Catalog a new container
+
+
+#### Headers
+
+```yaml
+x-build-token
+- type:        String
+- required:    true
+- description: The build token associated with the Shipment
+- requirement: Must be a valid build token
+```
+
+
+#### Fields
+
+```yaml
+name
+- type:        String
+- required:    true
+- description: Name of container (probably best to be role, like api, db)
+- requirement: Must be a string using only [A-Za-z0-9_-]
+
+image
+- type:        String
+- required:    true
+- description: The Docker link to the Docker container without tag
+- requirement: Must be a valid docker link, formatted: 'registry.domain/docker-image-name' (must be a DNS label)
+
+version
+- type:        String
+- required:    true
+- description: The version of the container, will be used as the Docker image tag
+- requirement: Must be a valid version
+```
+
+
 ## Running the API
 
 In order to run the Customs API there are several Env Vars that are required.
