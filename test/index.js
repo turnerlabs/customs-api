@@ -166,8 +166,8 @@ describe('Deploy', function () {
                 expect(body).to.deep.equal({
                     message: [
                         'authenticated and authorized',
-                        'updated shipment my-shipment:test-env container my-container',
-                        'triggered shipment my-shipment:test-env on barge fake-barge'
+                        'updated shipment my-shipment:test-env container my-container to version 0.1.0',
+                        'triggered shipment my-shipment:test-env with provider fake-barge'
                     ].join(', ')
                 });
 
@@ -194,8 +194,8 @@ describe('Deploy', function () {
                     message: [
                         'authenticated and authorized',
                         'cataloged my-container v0.1.0',
-                        'updated shipment my-shipment:test-env container my-container',
-                        'triggered shipment my-shipment:test-env on barge fake-barge'
+                        'updated shipment my-shipment:test-env container my-container to version 0.1.0',
+                        'triggered shipment my-shipment:test-env with provider fake-barge'
                     ].join(', ')
                 });
 
