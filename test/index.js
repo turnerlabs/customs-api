@@ -62,6 +62,13 @@ describe('Deploy', function () {
             })
             .replyWithFile(200, getMockData('container'))
 
+        nock(shipit)
+            .put('/v1/shipment/my-shipment/environment/test-env/container/bad', {
+                image: "registry.example.com/my-container:0.1.0",
+                buildToken: testAuthToken
+            })
+            .replyWithFile(422, getMockData('bad-data'))
+
         nock(trigger)
             .post('/my-shipment/test-env/fake-barge', {})
             .replyWithFile(200, getMockData('trigger'));
@@ -118,6 +125,31 @@ describe('Deploy', function () {
             .expect(409, done);
     });
 
+    it('should fail with 422 when bad data is supplied', function (done) {
+        request(server)
+            .post(path)
+            .set('x-build-token', testAuthToken)
+            .send({
+                name: "bad",
+                image: "registry.example.com/my-container:0.1.0",
+                version: "0.0.0"
+            })
+            .expect(422)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                let body = res.body;
+
+                expect(body).to.deep.equal({
+                    message: `Failed to PUT ${shipit}/v1/shipment/my-shipment/environment/test-env/container/bad (Status code: 422)`
+                });
+
+                done();
+            });
+    });
+
     it('should succeed', function (done) {
         request(server)
             .post(path)
@@ -134,8 +166,8 @@ describe('Deploy', function () {
                 expect(body).to.deep.equal({
                     message: [
                         'authenticated and authorized',
-                        'updated shipment my-shipment:test-env container my-container',
-                        'triggered shipment my-shipment:test-env on barge fake-barge'
+                        'updated shipment my-shipment:test-env container my-container to version 0.1.0',
+                        'triggered shipment my-shipment:test-env with provider fake-barge'
                     ].join(', ')
                 });
 
@@ -162,8 +194,8 @@ describe('Deploy', function () {
                     message: [
                         'authenticated and authorized',
                         'cataloged my-container v0.1.0',
-                        'updated shipment my-shipment:test-env container my-container',
-                        'triggered shipment my-shipment:test-env on barge fake-barge'
+                        'updated shipment my-shipment:test-env container my-container to version 0.1.0',
+                        'triggered shipment my-shipment:test-env with provider fake-barge'
                     ].join(', ')
                 });
 
