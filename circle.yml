@@ -1,3 +1,25 @@
 machine:
   node:
     version: 6.3.1
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  services:
+    - docker
+  
+dependencies:
+  override:
+    - docker version
+    - docker info
+    - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASSWORD" quay.io
+    - docker run -v `pwd`:/data quay.io/turner/harbor-deploy set_build_values /data $CIRCLE_BRANCH $CIRCLE_BUILD_NUM > buildprops;
+    - source buildprops; docker build -t quay.io/turner/$HARBOR_CONTAINER:$HARBOR_VERSION .
+    - source buildprops; docker push quay.io/turner/$HARBOR_CONTAINER:$HARBOR_VERSION
+    
+deployment:
+  staging:
+    branch: [develop, quay]
+    commands:
+      - source buildprops; docker run quay.io/turner/harbor-deploy deploy ops-$HARBOR_CONTAINER \ 
+                                                                   quay.io/turner $HARBOR_CONTAINER \
+                                                                   $HARBOR_VERSION dev ec2 $SHIPMENT_BUILD_TOKEN \
+                                                                   https://customs.services.dmtio.net
