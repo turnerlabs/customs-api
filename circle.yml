@@ -17,7 +17,7 @@ dependencies:
     
 deployment:
   staging:
-    branch: [develop, quay]
+    branch: [master, develop]
     commands:
       - source buildprops; docker run quay.io/turner/harbor-deploy deploy ops-$HARBOR_CONTAINER \ 
                                                                    quay.io/turner $HARBOR_CONTAINER \
