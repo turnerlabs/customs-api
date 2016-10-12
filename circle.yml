@@ -22,4 +22,4 @@ deployment:
       - source buildprops; docker run quay.io/turner/harbor-deploy deploy ops-$HARBOR_CONTAINER \ 
                                                                    quay.io/turner $HARBOR_CONTAINER \
                                                                    $HARBOR_VERSION dev ec2 $SHIPMENT_BUILD_TOKEN \
-                                                                   https://customs.dev.services.dmtio.net
+                                                                   https://customs.services.dmtio.net
