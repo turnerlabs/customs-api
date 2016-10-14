@@ -7,19 +7,25 @@ machine:
     - docker
   
 dependencies:
+  pre:
+    - npm install
+    - npm test
   override:
     - docker version
     - docker info
     - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASSWORD" quay.io
-    - docker run -v `pwd`:/data quay.io/turner/harbor-deploy set_build_values /data $CIRCLE_BRANCH $CIRCLE_BUILD_NUM > buildprops;
+    - docker run -v `pwd`:/data quay.io/turner/harbor-deploy set_build_values \
+      -d /data \
+      -b $CIRCLE_BRANCH \
+      -n $CIRCLE_BUILD_NUM > buildprops;
     - source buildprops; docker build -t quay.io/turner/$HARBOR_CONTAINER:$HARBOR_VERSION .
     - source buildprops; docker push quay.io/turner/$HARBOR_CONTAINER:$HARBOR_VERSION
-    
-deployment:
-  staging:
-    branch: [master, develop]
-    commands:
-      - source buildprops; docker run quay.io/turner/harbor-deploy deploy ops-$HARBOR_CONTAINER \ 
-                                                                   quay.io/turner $HARBOR_CONTAINER \
-                                                                   $HARBOR_VERSION dev ec2 $SHIPMENT_BUILD_TOKEN \
-                                                                   https://customs.services.dmtio.net
+    - source buildprops; docker run quay.io/turner/harbor-deploy deploy \
+      -s mss-$HARBOR_CONTAINER \
+      -r quay.io/turner \
+      -c $HARBOR_CONTAINER \
+      -v $HARBOR_VERSION \
+      -e dev \
+      -p ec2 \
+      -t $SHIPMENT_BUILD_TOKEN \
+      -a https://customs.services.dmtio.net
