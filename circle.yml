@@ -29,3 +29,9 @@ dependencies:
       -p ec2 \
       -t $SHIPMENT_BUILD_TOKEN \
       -a https://customs.services.dmtio.net
+      
+deployment:
+  staging:
+    branch: [master]
+    commands:
+      - source buildprops; docker push quay.io/turner/$HARBOR_CONTAINER:latest
