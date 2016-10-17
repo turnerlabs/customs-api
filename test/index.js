@@ -88,6 +88,7 @@ describe('Deploy', function () {
                 let body = res.body;
 
                 expect(body).to.deep.equal({
+                    code: 400,
                     message: 'missing field name, missing field version'
                 });
 
@@ -143,6 +144,7 @@ describe('Deploy', function () {
                 let body = res.body;
 
                 expect(body).to.deep.equal({
+                    code: 422,
                     message: `Failed to PUT ${shipit}/v1/shipment/my-shipment/environment/test-env/container/bad (Status code: 422)`
                 });
 
@@ -164,6 +166,7 @@ describe('Deploy', function () {
                 let body = res.body;
 
                 expect(body).to.deep.equal({
+                    code: 200,
                     message: [
                         'authenticated and authorized',
                         'updated shipment my-shipment:test-env container my-container to version 0.1.0',
@@ -191,6 +194,7 @@ describe('Deploy', function () {
                 let body = res.body;
 
                 expect(body).to.deep.equal({
+                    code: 200,
                     message: [
                         'authenticated and authorized',
                         'cataloged my-container v0.1.0',
@@ -247,6 +251,7 @@ describe('Catalog', function () {
                 let body = res.body;
 
                 expect(body).to.deep.equal({
+                    code: 400,
                     message: 'missing field name, missing field version'
                 });
 
@@ -298,6 +303,7 @@ describe('Catalog', function () {
                 let body = res.body;
 
                 expect(body).to.deep.equal({
+                    code: 200,
                     message: [
                         'authenticated and authorized',
                         'cataloged my-container v0.1.0'
