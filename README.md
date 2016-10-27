@@ -73,10 +73,10 @@ version
 - description: The version of the container, will be used as the Docker image tag
 - requirement: Must be a valid version
 
-catalog
+nocatalog
 - type:        Boolean
 - required:    false
-- description: The container should be cataloged in CatalogIt.
+- description: The container should not be cataloged in CatalogIt.
 - requirement: A boolean value
 ```
 

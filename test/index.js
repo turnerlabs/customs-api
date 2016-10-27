@@ -44,12 +44,19 @@ describe('Deploy', function () {
 
         nock(catalogit)
             .post('/v1/containers', {
-                catalog: true,
                 name: "my-container",
                 image: "registry.example.com/my-container:0.1.0",
                 version: "0.0.0"
             })
             .replyWithFile(409, getMockData('catalogit-conflict'))
+
+        nock(catalogit)
+            .post('/v1/containers', {
+                name: "bad",
+                image: "registry.example.com/my-container:0.1.0",
+                version: "0.0.0"
+            })
+            .replyWithFile(200, getMockData('catalogit'));
 
         nock(catalogit)
             .post('/v1/containers', data)
@@ -169,6 +176,7 @@ describe('Deploy', function () {
                     code: 200,
                     message: [
                         'authenticated and authorized',
+                        'cataloged my-container v0.1.0',
                         'updated shipment my-shipment:test-env container my-container to version 0.1.0',
                         'triggered shipment my-shipment:test-env with provider fake-barge'
                     ].join(', ')
@@ -178,8 +186,8 @@ describe('Deploy', function () {
             });
     });
 
-    it('should catalog container and succeed when catalog is active', function (done) {
-        data.catalog = true;
+    it('should succeed and not catalog container when nocatalog is present', function (done) {
+        data.nocatalog = true;
 
         request(server)
             .post(path)
@@ -197,7 +205,6 @@ describe('Deploy', function () {
                     code: 200,
                     message: [
                         'authenticated and authorized',
-                        'cataloged my-container v0.1.0',
                         'updated shipment my-shipment:test-env container my-container to version 0.1.0',
                         'triggered shipment my-shipment:test-env with provider fake-barge'
                     ].join(', ')
