@@ -14,25 +14,26 @@ dependencies:
     - docker version
     - docker info
     - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASSWORD" quay.io
-    - docker run -v `pwd`:/data quay.io/turner/harbor-deploy set_build_values \
+    - docker run -v `pwd`:/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.15 set_build_values \
       -d /data \
       -b $CIRCLE_BRANCH \
-      -n $CIRCLE_BUILD_NUM > buildprops;
-    - source buildprops; docker build -t quay.io/turner/$HARBOR_CONTAINER:$HARBOR_VERSION .
-    - source buildprops; docker push quay.io/turner/$HARBOR_CONTAINER:$HARBOR_VERSION
-    - source buildprops; docker run quay.io/turner/harbor-deploy deploy \
+      -n $CIRCLE_BUILD_NUM > props;
+    - source props; docker build -t $IMAGE .
+    - source props; docker push $IMAGE
+    - source props; docker --env-file props run quay.io/turner/harbor-deploy catalog \
       -s ops-$HARBOR_CONTAINER \
-      -r quay.io/turner \
-      -c $HARBOR_CONTAINER \
-      -v $HARBOR_VERSION \
       -e dev \
-      -p ec2 \
-      -t $SHIPMENT_BUILD_TOKEN \
-      -a https://customs.services.dmtio.net
+      -t $SHIPMENT_BUILD_TOKEN
       
 deployment:
   staging:
+    branch: [develop]
+    commands:
+      - source props; docker --env-file props run quay.io/turner/harbor-deploy deploy \
+        -s ops-$HARBOR_CONTAINER \
+        -e dev \
+        -t $SHIPMENT_BUILD_TOKEN
     branch: [master]
     commands:
-      - source buildprops; docker tag quay.io/turner/$HARBOR_CONTAINER:$HARBOR_VERSION quay.io/turner/$HARBOR_CONTAINER:latest
-      - source buildprops; docker push quay.io/turner/$HARBOR_CONTAINER:latest
+      - source props; docker tag $IMAGE quay.io/turner/$HARBOR_CONTAINER:latest
+      - source props; docker push quay.io/turner/$HARBOR_CONTAINER:latest
