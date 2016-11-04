@@ -7,11 +7,11 @@ machine:
     - docker
 
 test:
-  override:		
+  override:
     - npm run junit:
         environment:
           MOCHA_FILE: "${CIRCLE_TEST_REPORTS}/junit/test-results.xml"
-   
+
 dependencies:
   pre:
     - npm install
@@ -22,10 +22,10 @@ dependencies:
     - docker login -e="${DOCKER_EMAIL}" -u="${DOCKER_USER}" -p="${DOCKER_PASSWORD}" quay.io
     - docker run -v $(pwd):/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 set_build_values \
       -d /data \
-      -b ${CIRCLE_BRANCH} \
-      -n ${CIRCLE_BUILD_NUM} > props;
-    - source props; docker build -t ${IMAGE} .
-    - source props; docker push ${IMAGE}
+      -b "${CIRCLE_BRANCH}" \
+      -n "${CIRCLE_BUILD_NUM}" > props;
+    - source props; docker build -t "${IMAGE}" .
+    - source props; docker push "${IMAGE}"
     - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 catalog \
       -s "ops-${HARBOR_CONTAINER}" \
       -e dev \
