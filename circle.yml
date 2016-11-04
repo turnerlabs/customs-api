@@ -20,7 +20,7 @@ dependencies:
       -n $CIRCLE_BUILD_NUM > props;
     - source props; docker build -t $IMAGE .
     - source props; docker push $IMAGE
-    - source props; docker --env-file props run quay.io/turner/harbor-deploy catalog \
+    - source props; docker run --env-file props quay.io/turner/harbor-deploy catalog \
       -s ops-$HARBOR_CONTAINER \
       -e dev \
       -t $SHIPMENT_BUILD_TOKEN
@@ -29,7 +29,7 @@ deployment:
   staging:
     branch: [develop]
     commands:
-      - source props; docker --env-file props run quay.io/turner/harbor-deploy deploy \
+      - source props; docker run --env-file props quay.io/turner/harbor-deploy deploy \
         -s ops-$HARBOR_CONTAINER \
         -e dev \
         -t $SHIPMENT_BUILD_TOKEN
