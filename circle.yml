@@ -5,7 +5,13 @@ machine:
     - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
   services:
     - docker
-  
+
+test:
+  override:		
+     - npm run junit:		
+         environment:		
+           MOCHA_FILE: "${CIRCLE_TEST_REPORTS}/junit/test-results.xml"  
+           
 dependencies:
   pre:
     - npm install
@@ -13,27 +19,27 @@ dependencies:
   override:
     - docker version
     - docker info
-    - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USER" -p="$DOCKER_PASSWORD" quay.io
-    - docker run -v `pwd`:/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.16 set_build_values \
+    - docker login -e="${DOCKER_EMAIL}" -u="${DOCKER_USER}" -p="${DOCKER_PASSWORD}" quay.io
+    - docker run -v $(pwd):/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 set_build_values \
       -d /data \
-      -b $CIRCLE_BRANCH \
-      -n $CIRCLE_BUILD_NUM > props;
-    - source props; docker build -t $IMAGE .
-    - source props; docker push $IMAGE
-    - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.16 catalog \
-      -s ops-$HARBOR_CONTAINER \
+      -b ${CIRCLE_BRANCH} \
+      -n ${CIRCLE_BUILD_NUM} > props;
+    - source props; docker build -t ${IMAGE} .
+    - source props; docker push ${IMAGE}
+    - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 catalog \
+      -s "ops-${HARBOR_CONTAINER}" \
       -e dev \
-      -t $SHIPMENT_BUILD_TOKEN
+      -t "${SHIPMENT_BUILD_TOKEN}"
       
 deployment:
   staging:
     branch: [develop]
     commands:
-      - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.16 deploy \
-        -s ops-$HARBOR_CONTAINER \
+      - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 deploy \
+        -s "ops-${HARBOR_CONTAINER}" \
         -e dev \
-        -t $SHIPMENT_BUILD_TOKEN
+        -t "${SHIPMENT_BUILD_TOKEN}"
     branch: [master]
     commands:
-      - source props; docker tag $IMAGE $LATEST
-      - source props; docker push $LATEST
+      - source props; docker tag "${IMAGE}" "${LATEST}"
+      - source props; docker push "${LATEST}"
