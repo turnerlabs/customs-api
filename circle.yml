@@ -23,7 +23,9 @@ dependencies:
     - docker run -v $(pwd):/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.25 set_build_values \
       -b "${CIRCLE_BRANCH}" \
       -n "${CIRCLE_BUILD_NUM}" > props;
-    - echo "SHIPMENT=ops-customs-api\nENVIRONMENT=dev\nTOKEN=$SHIPMENT_BUILD_TOKEN" >> props 
+    - echo "SHIPMENT=ops-customs-api" >> props
+    - echo "ENVIRONMENT=dev" >> props"
+    - echo "TOKEN=$SHIPMENT_BUILD_TOKEN" >> props
     - source props; docker build -t "${IMAGE}" .
     - source props; docker push "${IMAGE}"
     - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.25 catalog
