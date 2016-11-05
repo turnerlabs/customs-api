@@ -29,6 +29,7 @@ dependencies:
     - source props; docker build -t "${IMAGE}" .
     - source props; docker push "${IMAGE}"
     - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.25 catalog
+    - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.25 deploy
       
 deployment:
   staging:
