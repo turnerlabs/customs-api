@@ -20,25 +20,19 @@ dependencies:
     - docker version
     - docker info
     - docker login -e="${DOCKER_EMAIL}" -u="${DOCKER_USER}" -p="${DOCKER_PASSWORD}" quay.io
-    - docker run -v $(pwd):/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 set_build_values \
-      -d /data \
+    - docker run -v $(pwd):/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.25 set_build_values \
       -b "${CIRCLE_BRANCH}" \
       -n "${CIRCLE_BUILD_NUM}" > props;
+    - echo "SHIPMENT=ops-customs-api\nENVIRONMENT=dev\nTOKEN=$SHIPMENT_BUILD_TOKEN" > props 
     - source props; docker build -t "${IMAGE}" .
     - source props; docker push "${IMAGE}"
-    - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 catalog \
-      -s "ops-${HARBOR_CONTAINER}" \
-      -e dev \
-      -t "${SHIPMENT_BUILD_TOKEN}"
+    - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.25 catalog
       
 deployment:
   staging:
     branch: [develop]
     commands:
-      - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.18 deploy \
-        -s "ops-${HARBOR_CONTAINER}" \
-        -e dev \
-        -t "${SHIPMENT_BUILD_TOKEN}"
+      - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.25 deploy
     branch: [master]
     commands:
       - source props; docker tag "${IMAGE}" "${LATEST}"
