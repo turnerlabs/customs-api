@@ -20,21 +20,21 @@ dependencies:
     - docker version
     - docker info
     - docker login -e="${DOCKER_EMAIL}" -u="${DOCKER_USER}" -p="${DOCKER_PASSWORD}" quay.io
-    - docker run -v $(pwd):/data quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.28 set_build_values \
+    - docker run -v $(pwd):/data quay.io/turner/harbor-deploy:0.2.0-add-more-options.32 set_build_values \
+      -s "ops-customs-api" \
+      -t "${SHIPMENT_BUILD_TOKEN}" \
+      -e "dev" \
       -b "${CIRCLE_BRANCH}" \
       -n "${CIRCLE_BUILD_NUM}" > props;
-    - echo "SHIPMENT=ops-customs-api" >> props
-    - echo "ENVIRONMENT=dev" >> props
-    - echo "TOKEN=$SHIPMENT_BUILD_TOKEN" >> props
     - source props; docker build -t "${IMAGE}" .
     - source props; docker push "${IMAGE}"
-    - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.28 catalog
+    - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-more-options.32 catalog
       
 deployment:
   staging:
     branch: [develop]
     commands:
-      - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-catalog-function.28 deploy
+      - source props; docker run --env-file props quay.io/turner/harbor-deploy:0.2.0-add-more-options.32 deploy
     branch: [master]
     commands:
       - source props; docker tag "${IMAGE}" "${LATEST}"
