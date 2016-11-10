@@ -37,5 +37,6 @@ deployment:
       - source props; docker run -it --env-file props quay.io/turner/harbor-deploy:0.2.0-add-more-options.37 deploy
     branch: [master]
     commands:
+      - source props; docker run -it --env-file props quay.io/turner/harbor-deploy:0.2.0-add-more-options.37 deploy
       - source props; docker tag "${IMAGE}" "${LATEST}"
       - source props; docker push "${LATEST}"
