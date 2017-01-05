@@ -89,7 +89,7 @@ describe('Deploy', function () {
 
                 expect(body).to.deep.equal({
                     code: 400,
-                    message: 'missing field name, missing field version'
+                    message: "missing field: 'name', missing field: 'version'"
                 });
 
                 done();
@@ -123,7 +123,21 @@ describe('Deploy', function () {
                 image: "registry.example.com/my-container:0.1.0",
                 version: "0.0.0"
             })
-            .expect(409, done);
+            .expect(409)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                let body = res.body;
+
+                expect(body).to.deep.equal({
+                    code: 409,
+                    message: `Failed to POST http://catalogit.test.services.dmtio.net/v1/containers (Status code: 409) (Message: {\"error\":\"Container Error: There is already a combination of my-container:0.0.0. Specify unique combinations.\"})`
+                });
+
+                done();
+            });
     });
 
     it('should fail with 422 when bad data is supplied', function (done) {
@@ -252,7 +266,7 @@ describe('Catalog', function () {
 
                 expect(body).to.deep.equal({
                     code: 400,
-                    message: 'missing field name, missing field version'
+                    message: "missing field: 'name', missing field: 'version'"
                 });
 
                 done();
