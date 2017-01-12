@@ -383,7 +383,7 @@ describe('Check Image', () => {
 
               let body = res.body;
 
-              expect(body).to.deep.equal({code: 200, message: "Image Exists In Catalog: real-image vreal-version"});
+              expect(body).to.deep.equal({code: 200, message: "Image Exists In Catalog: real-image:real-version"});
 
               done();
           });
