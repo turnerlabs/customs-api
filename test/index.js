@@ -89,7 +89,7 @@ describe('Deploy', function () {
 
                 expect(body).to.deep.equal({
                     code: 400,
-                    message: 'missing field name, missing field version'
+                    message: "missing field: 'name', missing field: 'version'"
                 });
 
                 done();
@@ -123,7 +123,21 @@ describe('Deploy', function () {
                 image: "registry.example.com/my-container:0.1.0",
                 version: "0.0.0"
             })
-            .expect(409, done);
+            .expect(409)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                let body = res.body;
+
+                expect(body).to.deep.equal({
+                    code: 409,
+                    message: `Failed to POST http://catalogit.test.services.dmtio.net/v1/containers (Status code: 409) (Message: {\"error\":\"Container Error: There is already a combination of my-container:0.0.0. Specify unique combinations.\"})`
+                });
+
+                done();
+            });
     });
 
     it('should fail with 422 when bad data is supplied', function (done) {
@@ -145,7 +159,7 @@ describe('Deploy', function () {
 
                 expect(body).to.deep.equal({
                     code: 422,
-                    message: `Failed to PUT ${shipit}/v1/shipment/my-shipment/environment/test-env/container/bad (Status code: 422)`
+                    message: `Failed to PUT http://shipit.test.services.dmtio.net/v1/shipment/my-shipment/environment/test-env/container/bad (Status code: 422) (Message: {\"error\":\"Container foo does not exist\"})`
                 });
 
                 done();
@@ -177,10 +191,10 @@ describe('Deploy', function () {
                 done();
             });
     });
-
+    
     it('should catalog container and succeed when catalog is active', function (done) {
         data.catalog = true;
-
+        
         request(server)
             .post(path)
             .set('x-build-token', testAuthToken)
@@ -252,7 +266,7 @@ describe('Catalog', function () {
 
                 expect(body).to.deep.equal({
                     code: 400,
-                    message: 'missing field name, missing field version'
+                    message: "missing field: 'name', missing field: 'version'"
                 });
 
                 done();
@@ -314,3 +328,64 @@ describe('Catalog', function () {
             });
     });
 });
+
+
+describe('Check Image', () => {
+  
+  
+  beforeEach(() => {
+    let catalogit = 'http://catalogit.test.services.dmtio.net';
+    
+    nock(catalogit)
+        .get('/v1/container/fake-image/fake-version')
+        .reply(404, (uri, requestBody) => {
+          return {code: 404, message: "does not exist"}
+        });
+        
+    nock(catalogit)
+        .get('/v1/container/real-image/real-version')
+        .reply(200, (uri, requestBody) => {
+          return {code: 200, message: "hey it exists"}
+        });
+  });
+  
+  it('should fail with 404 if container doesnt exist', function (done) {
+      request(server)
+          .get('/catalog/fake-image/fake-version')
+          .expect(404)
+          .end((err, res) => {
+            
+              if (err) {
+                  return done(err);
+              }
+
+              let body = res.body;
+
+              expect(body).to.deep.equal({
+                  code: 404,
+                  message: `Failed to GET http://catalogit.test.services.dmtio.net/v1/container/fake-image/fake-version (Status code: 404) (Message: {\"code\":404,\"message\":\"does not exist\"})`
+              });
+
+              done();
+          });
+  });
+  
+  
+  it('should pass with 200 and not return container information', function (done) {
+      request(server)
+          .get('/catalog/real-image/real-version')
+          .expect(200)
+          .end((err, res) => {
+            
+              if (err) {
+                  return done(err);
+              }
+
+              let body = res.body;
+
+              expect(body).to.deep.equal({code: 200, message: "Image Exists In Catalog: real-image:real-version"});
+
+              done();
+          });
+  });
+})

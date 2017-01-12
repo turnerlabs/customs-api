@@ -44,6 +44,11 @@ app.post('/catalog/:shipment/:environment/:provider',
     handlers.response
 );
 
+app.get('/catalog/:image/:version',
+    catalog.check,
+    handlers.response
+);
+
 let server = app.listen(port, _ => debug('listening on %s', port));
 
 module.exports = server;
