@@ -21,20 +21,14 @@ dependencies:
     - docker info
     - docker login -e="${DOCKER_EMAIL}" -u="${DOCKER_USER}" -p="${DOCKER_PASSWORD}" quay.io
     - docker run -v $(pwd):/data quay.io/turner/harbor-deploy set_build_values \
-      -d /data \
-      -b "${CIRCLE_BRANCH}" \
-      -n "${CIRCLE_BUILD_NUM}" > buildprops;
-    - source buildprops; docker build -t "quay.io/turner/${CONTAINER}:${VERSION}" .
-    - source buildprops; docker push "quay.io/turner/${CONTAINER}:${VERSION}"
-    - source buildprops; docker run quay.io/turner/harbor-deploy deploy \
-      -s "ops-${CONTAINER}" \
-      -r quay.io/turner \
-      -c "${CONTAINER}" \
-      -v "${VERSION}" \
-      -e dev \
-      -p ec2 \
+      -s "ops-customs-api" \
       -t "${SHIPMENT_BUILD_TOKEN}" \
-      -a https://customs.services.dmtio.net
+      -e "dev" \
+      -b "${CIRCLE_BRANCH}" \
+      -n "${CIRCLE_BUILD_NUM}" > props;
+    - source props; docker build -t "${IMAGE}" .
+    - source props; docker push "${IMAGE}"
+    - source props; docker run -it --env-file props quay.io/turner/harbor-deploy catalog
 
 deployment:
   staging:
