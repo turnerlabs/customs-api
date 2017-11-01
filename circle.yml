@@ -33,7 +33,7 @@ dependencies:
       -v "${VERSION}" \
       -e dev \
       -p ec2 \
-      -t "${TOKEN}" \
+      -t "${SHIPMENT_BUILD_TOKEN}" \
       -a https://customs.services.dmtio.net
 
 deployment:
