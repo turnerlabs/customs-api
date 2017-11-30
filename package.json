@@ -1,6 +1,6 @@
 {
   "name": "customs-api",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A service for moving information from external cloud services into private Harbor services.",
   "main": "app.js",
   "scripts": {
