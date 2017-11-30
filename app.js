@@ -24,8 +24,7 @@ app.use(bodyParser.json())
 app.use(handlers.contentJson);
 
 app.get('/_hc', handlers.healthCheck);
-
-app.use(morgan('common'));
+app.use(morgan('{"method": ":method", "status": ":status", "url": ":url", "user-agent": ":user-agent", "response-time": ":response-time", "http-version": ":http-version"}'));
 app.use(handlers.appContext);
 
 app.post('/deploy/:shipment/:environment/:provider',

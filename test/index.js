@@ -42,6 +42,14 @@ describe('Deploy', function () {
             .get('/v1/shipment/my-shipment/environment/test-env')
             .replyWithFile(200, getMockData('shipit'));
 
+        nock(shipit)
+            .get('/v1/shipment/nonexistent/environment/dev')
+            .reply(404, {"code": 404, "message": "Shipment 'nonexistent' not found."});
+
+        nock(shipit)
+            .get('/v1/shipment/my-shipment/environment/nonexistent')
+            .reply(404, {"code": 404, "message": "Environment 'nonexistent' not found for Shipment 'my-shipment'."});
+
         nock(catalogit)
             .post('/v1/containers', {
                 catalog: true,
@@ -166,6 +174,46 @@ describe('Deploy', function () {
             });
     });
 
+    it('should fail with a 400 when trying to deploy to a nonexistent Shipment', function (done) {
+        request(server)
+            .post('/deploy/nonexistent/dev/provider')
+            .set('x-build-token', testAuthToken)
+            .send(data)
+            .expect(400)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                let body = res.body;
+
+                expect(body.code).to.equal(400);
+                expect(body.message).to.equal('shipment nonexistent:dev does not exist');
+
+                done();
+            });
+    });
+
+    it('should fail with a 400 when trying to deploy to a nonexistent Environment', function (done) {
+        request(server)
+            .post('/deploy/my-shipment/nonexistent/provider')
+            .set('x-build-token', testAuthToken)
+            .send(data)
+            .expect(400)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                let body = res.body;
+
+                expect(body.code).to.equal(400);
+                expect(body.message).to.equal('shipment my-shipment:nonexistent does not exist');
+
+                done();
+            });
+    });
+
     it('should succeed', function (done) {
         request(server)
             .post(path)
@@ -238,6 +286,14 @@ describe('Catalog', function () {
             .get('/v1/shipment/my-shipment/environment/test-env')
             .replyWithFile(200, getMockData('shipit'));
 
+        nock(shipit)
+            .get('/v1/shipment/nonexistent/environment/dev')
+            .reply(404, {"code": 404, "message": "Shipment 'nonexistent' not found."});
+
+        nock(shipit)
+            .get('/v1/shipment/my-shipment/environment/nonexistent')
+            .reply(404, {"code": 404, "message": "Environment 'nonexistent' not found for Shipment 'my-shipment'."});
+
         nock(catalogit)
             .post('/v1/containers', {
                 name: "my-container",
@@ -301,6 +357,46 @@ describe('Catalog', function () {
                 version: "0.0.0"
             })
             .expect(409, done);
+    });
+
+    it('should fail with a 400 when trying to catalog to a nonexistent Shipment', function (done) {
+        request(server)
+            .post('/catalog/nonexistent/dev/provider')
+            .set('x-build-token', testAuthToken)
+            .send(data)
+            .expect(400)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                let body = res.body;
+
+                expect(body.code).to.equal(400);
+                expect(body.message).to.equal('shipment nonexistent:dev does not exist');
+
+                done();
+            });
+    });
+
+    it('should fail with a 400 when trying to catalog to a nonexistent Environment', function (done) {
+        request(server)
+            .post('/catalog/my-shipment/nonexistent/provider')
+            .set('x-build-token', testAuthToken)
+            .send(data)
+            .expect(400)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+
+                let body = res.body;
+
+                expect(body.code).to.equal(400);
+                expect(body.message).to.equal('shipment my-shipment:nonexistent does not exist');
+
+                done();
+            });
     });
 
     it('should succeed', function (done) {
